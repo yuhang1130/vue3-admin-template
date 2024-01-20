@@ -1,14 +1,22 @@
 export interface LoginRequestData {
-  /** admin 或 editor */
-  username: "admin" | "editor"
+  user_name: string
   /** 密码 */
-  password: string
+  pass_word: string
   /** 验证码 */
   code: string
+  sid: string
+}
+
+export interface UserInfoData {
+  user_name: string;
+  is_admin: boolean;
+  phone: string;
+  email: string;
+  roles: string[]
 }
 
 export type LoginCodeResponseData = ApiResponseData<string>
 
 export type LoginResponseData = ApiResponseData<{ token: string }>
 
-export type UserInfoResponseData = ApiResponseData<{ username: string; roles: string[] }>
+export type UserInfoResponseData = ApiResponseData<UserInfoData>

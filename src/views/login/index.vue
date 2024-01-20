@@ -2,11 +2,12 @@
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useUserStore } from "@/store/modules/user"
-import { type FormInstance, type FormRules } from "element-plus"
+import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { User, Lock, Key, Picture, Loading } from "@element-plus/icons-vue"
 import { getLoginCodeApi } from "@/api/login"
 import { type LoginRequestData } from "@/api/login/types/login"
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
+import { nanoid } from 'nanoid'
 
 const router = useRouter()
 
@@ -19,16 +20,17 @@ const loading = ref(false)
 const codeUrl = ref("")
 /** 登录表单数据 */
 const loginFormData: LoginRequestData = reactive({
-  username: "admin",
-  password: "12345678",
-  code: ""
+  user_name: "",
+  pass_word: "",
+  code: "",
+  sid: ""
 })
 /** 登录表单校验规则 */
 const loginFormRules: FormRules = {
-  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-  password: [
+  user_name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  pass_word: [
     { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 8, max: 16, message: "长度在 8 到 16 个字符", trigger: "blur" }
+    { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
   ],
   code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
 }
@@ -44,13 +46,12 @@ const handleLogin = () => {
         })
         .catch(() => {
           createCode()
-          loginFormData.password = ""
         })
         .finally(() => {
           loading.value = false
         })
     } else {
-      console.error("表单校验不通过", fields)
+      ElMessage.error(`表单校验不通过！`)
     }
   })
 }
@@ -60,7 +61,8 @@ const createCode = () => {
   loginFormData.code = ""
   // 获取验证码
   codeUrl.value = ""
-  getLoginCodeApi().then((res) => {
+  loginFormData.sid = nanoid()
+  getLoginCodeApi({ sid: loginFormData.sid }).then((res) => {
     codeUrl.value = res.data
   })
 }
@@ -80,7 +82,7 @@ createCode()
         <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
           <el-form-item prop="username">
             <el-input
-              v-model.trim="loginFormData.username"
+              v-model.trim="loginFormData.user_name"
               placeholder="用户名"
               type="text"
               tabindex="1"
@@ -90,7 +92,7 @@ createCode()
           </el-form-item>
           <el-form-item prop="password">
             <el-input
-              v-model.trim="loginFormData.password"
+              v-model.trim="loginFormData.pass_word"
               placeholder="密码"
               type="password"
               tabindex="2"
@@ -110,7 +112,7 @@ createCode()
               size="large"
             >
               <template #append>
-                <div style="height: 50px;cursor: pointer;" v-html="codeUrl" @click="createCode"></div>
+                <div style="height: 50px; cursor: pointer" v-html="codeUrl" @click="createCode" />
               </template>
             </el-input>
           </el-form-item>

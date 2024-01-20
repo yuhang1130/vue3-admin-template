@@ -16,7 +16,7 @@ const show = ref(false)
 
 <template>
   <div class="handle-button" @click="show = true">
-    <el-icon :size="24">
+    <el-icon :size="16">
       <Setting />
     </el-icon>
   </div>
@@ -27,8 +27,8 @@ const show = ref(false)
 
 <style lang="scss" scoped>
 .handle-button {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   background-color: var(--v3-rightpanel-button-bg-color);
   position: fixed;
   top: v-bind(buttonTopCss);

@@ -12,7 +12,7 @@ initTheme()
 
 /** 作者小心思 */
 ElNotification({
-  title: "欢迎小可爱",
+  title: "欢迎小土豆",
   type: "success",
   message: h(
     "a",
