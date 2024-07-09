@@ -1,74 +1,102 @@
 <script lang="ts" setup>
-import { reactive, ref } from "vue"
-import { useRouter } from "vue-router"
-import { useUserStore } from "@/store/modules/user"
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/modules/user";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
-import { User, Lock, Key, Picture, Loading } from "@element-plus/icons-vue"
-import { getLoginCodeApi } from "@/api/login"
-import { type LoginRequestData } from "@/api/login/types/login"
-import ThemeSwitch from "@/components/ThemeSwitch/index.vue"
-import { nanoid } from 'nanoid'
+import { User, Lock, Key } from "@element-plus/icons-vue";
+import { getLoginCodeApi } from "@/api/login";
+import { InputDomType, type LoginRequestData } from "@/api/login/types/login";
+import ThemeSwitch from "@/components/ThemeSwitch/index.vue";
+import { nanoid } from "nanoid";
 
-const router = useRouter()
+const router = useRouter();
 
-/** 登录表单元素的引用 */
-const loginFormRef = ref<FormInstance | null>(null)
-
-/** 登录按钮 Loading */
-const loading = ref(false)
-/** 验证码图片 URL */
-const codeUrl = ref("")
-/** 登录表单数据 */
+const loginFormRef = ref<FormInstance | null>(null);
+const loading = ref(false);
+const codeUrl = ref("");
 const loginFormData: LoginRequestData = reactive({
-  user_name: "",
-  pass_word: "",
+  userName: "",
+  passWord: "",
   code: "",
   sid: ""
-})
-/** 登录表单校验规则 */
+});
+
 const loginFormRules: FormRules = {
-  user_name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-  pass_word: [
+  userName: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+  passWord: [
     { required: true, message: "请输入密码", trigger: "blur" },
     { min: 6, max: 16, message: "长度在 6 到 16 个字符", trigger: "blur" }
   ],
   code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
-}
-/** 登录逻辑 */
+};
+
+const inputDom = reactive<InputDomType[]>([
+  {
+    prop: "username",
+    vModel: "userName",
+    placeholder: "用户名",
+    type: "text",
+    tabIndex: "1",
+    prefixIcon: User as any,
+    size: "large",
+    showPassword: false,
+    showCodeUrl: false
+  },
+  {
+    prop: "password",
+    vModel: "passWord",
+    placeholder: "密码",
+    type: "password",
+    tabIndex: "2",
+    prefixIcon: Lock as any,
+    size: "large",
+    showPassword: true,
+    showCodeUrl: false
+  },
+  {
+    prop: "code",
+    vModel: "code",
+    placeholder: "验证码",
+    type: "text",
+    tabIndex: "3",
+    prefixIcon: Key as any,
+    size: "large",
+    showPassword: false,
+    showCodeUrl: true
+  }
+]);
+
 const handleLogin = () => {
-  loginFormRef.value?.validate((valid: boolean, fields) => {
+  console.log("loginFormData------", loginFormData);
+  loginFormRef.value?.validate((valid: boolean) => {
     if (valid) {
-      loading.value = true
+      loading.value = true;
       useUserStore()
         .login(loginFormData)
         .then(() => {
-          router.push({ path: "/" })
+          router.push({ path: "/" });
         })
         .catch(() => {
-          createCode()
+          createCode();
         })
         .finally(() => {
-          loading.value = false
-        })
+          loading.value = false;
+        });
     } else {
-      ElMessage.error(`表单校验不通过！`)
+      ElMessage.error("表单校验不通过！");
     }
-  })
-}
-/** 创建验证码 */
-const createCode = () => {
-  // 先清空验证码的输入
-  loginFormData.code = ""
-  // 获取验证码
-  codeUrl.value = ""
-  loginFormData.sid = nanoid()
-  getLoginCodeApi({ sid: loginFormData.sid }).then((res) => {
-    codeUrl.value = res.data
-  })
-}
+  });
+};
 
-/** 初始化验证码 */
-createCode()
+const createCode = () => {
+  loginFormData.code = "";
+  codeUrl.value = "";
+  loginFormData.sid = nanoid();
+  getLoginCodeApi({ sid: loginFormData.sid }).then((res) => {
+    codeUrl.value = res.data;
+  });
+};
+createCode();
 </script>
 
 <template>
@@ -76,47 +104,45 @@ createCode()
     <ThemeSwitch class="theme-switch" />
     <div class="login-card">
       <div class="title">
-        <img src="@/assets/layouts/logo-text-2.png" />
+        <img src="@/assets/layouts/logo-text-2.png" alt="加载中..." />
       </div>
       <div class="content">
-        <el-form ref="loginFormRef" :model="loginFormData" :rules="loginFormRules" @keyup.enter="handleLogin">
-          <el-form-item prop="username">
+        <el-form
+          ref="loginFormRef"
+          :model="loginFormData"
+          :rules="loginFormRules"
+          @keyup.enter="handleLogin"
+        >
+          <el-form-item
+            v-for="item in inputDom"
+            :prop="item.prop"
+            :key="`form-item-${item.tabIndex}`"
+          >
             <el-input
-              v-model.trim="loginFormData.user_name"
-              placeholder="用户名"
-              type="text"
-              tabindex="1"
-              :prefix-icon="User"
-              size="large"
-            />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input
-              v-model.trim="loginFormData.pass_word"
-              placeholder="密码"
-              type="password"
-              tabindex="2"
-              :prefix-icon="Lock"
-              size="large"
-              show-password
-            />
-          </el-form-item>
-          <el-form-item prop="code">
-            <el-input
-              v-model.trim="loginFormData.code"
-              placeholder="验证码"
-              type="text"
-              tabindex="3"
-              :prefix-icon="Key"
-              maxlength="7"
-              size="large"
+              v-model.trim="loginFormData[item.vModel]"
+              :placeholder="item.placeholder"
+              :type="item.type"
+              :tabindex="item.tabIndex"
+              :prefix-icon="item.prefixIcon"
+              :size="item.size"
+              :show-password="item.showPassword"
             >
-              <template #append>
-                <div style="height: 50px; cursor: pointer" v-html="codeUrl" @click="createCode" />
+              <template v-if="item.showCodeUrl" #append>
+                <div
+                  style="height: 50px; cursor: pointer"
+                  v-html="codeUrl"
+                  @click="createCode"
+                />
               </template>
             </el-input>
           </el-form-item>
-          <el-button :loading="loading" type="primary" size="large" @click.prevent="handleLogin">登 录</el-button>
+          <el-button
+            :loading="loading"
+            type="primary"
+            size="large"
+            @click.prevent="handleLogin"
+            >登 录</el-button
+          >
         </el-form>
       </div>
     </div>

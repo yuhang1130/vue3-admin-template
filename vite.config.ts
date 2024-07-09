@@ -38,7 +38,7 @@ export default (configEnv: ConfigEnv): UserConfigExport => {
           target: "http://localhost:9091",
           /** 是否允许跨域 */
           changeOrigin: true,
-          rewrite: (path) =>  path.replace(/^\/api/, "")
+          rewrite: (path) => path.replace(/^\/api/, "")
         }
       },
       /** 预热常用文件，提高初始页面加载速度 */

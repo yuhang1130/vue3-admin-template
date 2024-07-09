@@ -1,5 +1,5 @@
-import { request } from "@/utils/service"
-import type * as Login from "./types/login"
+import { request } from "@/utils/service";
+import type * as Login from "./types/login";
 
 /** 获取登录验证码 */
 export function getLoginCodeApi(params: { sid: string }) {
@@ -7,7 +7,7 @@ export function getLoginCodeApi(params: { sid: string }) {
     url: "user/captcha",
     method: "get",
     params
-  })
+  });
 }
 
 /** 登录并返回 Token */
@@ -16,7 +16,7 @@ export function loginApi(data: Login.LoginRequestData) {
     url: "user/login",
     method: "post",
     data
-  })
+  });
 }
 
 /** 获取用户详情 */
@@ -24,5 +24,5 @@ export function getUserInfoApi() {
   return request<Login.UserInfoResponseData>({
     url: "user/info",
     method: "post"
-  })
+  });
 }

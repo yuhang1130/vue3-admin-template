@@ -1,15 +1,23 @@
-import { type RouteLocationNormalized } from "vue-router"
+import { type RouteLocationNormalized } from "vue-router";
 
 /** 免登录白名单（匹配路由 path） */
-const whiteListByPath: string[] = ["/login"]
+const whiteListByPath: string[] = ["/login"];
 
 /** 免登录白名单（匹配路由 name） */
-const whiteListByName: string[] = []
+const whiteListByName: string[] = [];
 
 /** 判断是否在白名单 */
 const isWhiteList = (to: RouteLocationNormalized) => {
   // path 和 name 任意一个匹配上即可
-  return whiteListByPath.indexOf(to.path) !== -1 || whiteListByName.indexOf(to.name as any) !== -1
-}
+  if (whiteListByPath.indexOf(to.path) !== -1) {
+    return true; // 或其他适当的处理
+  }
 
-export default isWhiteList
+  if (whiteListByName.length === 0) {
+    return false; // 或其他适当的处理
+  }
+
+  return whiteListByName.indexOf(to.name as any) !== -1;
+};
+
+export default isWhiteList;

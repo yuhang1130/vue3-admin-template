@@ -1,4 +1,4 @@
-import { useTagsViewStoreHook } from "@/store/modules/tags-view"
+import { useTagsViewStoreHook } from "@/store/modules/tags-view";
 
 /**
  * 功能：修复 <transition> 和 <keep-alive> 组合使用导致的页面空白
@@ -10,6 +10,6 @@ import { useTagsViewStoreHook } from "@/store/modules/tags-view"
  * 4. 结果：内容区没有加载出来呈现空白状态
  */
 export const fixBlankPage = () => {
-  const tagsViewStore = useTagsViewStoreHook()
-  tagsViewStore.cachedViews = [...tagsViewStore.cachedViews]
-}
+  const tagsViewStore = useTagsViewStoreHook();
+  tagsViewStore.cachedViews = [...tagsViewStore.cachedViews];
+};

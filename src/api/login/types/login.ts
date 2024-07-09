@@ -1,22 +1,38 @@
 export interface LoginRequestData {
-  user_name: string
-  /** 密码 */
-  pass_word: string
-  /** 验证码 */
-  code: string
-  sid: string
+  userName: string;
+  passWord: string;
+  code: string;
+  sid: string;
 }
 
 export interface UserInfoData {
-  user_name: string;
-  is_admin: boolean;
+  userName: string;
+  isAdmin: boolean;
   phone: string;
   email: string;
-  roles: string[]
+  roles: string[];
 }
 
-export type LoginCodeResponseData = ApiResponseData<string>
+export interface InputDomType {
+  prop: string;
+  vModel: "userName" | "passWord" | "code";
+  placeholder: string;
+  type: string;
+  tabIndex: string;
+  prefixIcon: string;
+  size: "" | "default" | "small" | "large";
+  showPassword: boolean;
+  showCodeUrl: boolean;
+}
 
-export type LoginResponseData = ApiResponseData<{ token: string }>
+export type ApiResponseData<T> = {
+  data: T;
+  success: boolean;
+  message?: string;
+};
 
-export type UserInfoResponseData = ApiResponseData<UserInfoData>
+export type LoginCodeResponseData = ApiResponseData<string>;
+
+export type LoginResponseData = ApiResponseData<{ token: string }>;
+
+export type UserInfoResponseData = ApiResponseData<UserInfoData>;

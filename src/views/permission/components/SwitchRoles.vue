@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue"
-import { useUserStore } from "@/store/modules/user"
+import { ref, watch } from "vue";
+import { useUserStore } from "@/store/modules/user";
 
 /** Vue 3.3+ defineEmits 语法 */
 const emit = defineEmits<{
-  change: []
-}>()
+  change: [];
+}>();
 
-const userStore = useUserStore()
-const switchRoles = ref(userStore.roles[0])
+const userStore = useUserStore();
+const switchRoles = ref(userStore.roles[0]);
 watch(switchRoles, async (value) => {
-  await userStore.changeRoles(value)
-  emit("change")
-})
+  await userStore.changeRoles(value);
+  emit("change");
+});
 </script>
 
 <template>

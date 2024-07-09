@@ -17,7 +17,7 @@ const SELECT_RESPONSE_DATA = {
     }
   ],
   message: "获取 Select 数据成功"
-}
+};
 
 /** 模拟接口 */
 export function getSelectDataApi() {
@@ -26,11 +26,11 @@ export function getSelectDataApi() {
     setTimeout(() => {
       // 模拟接口调用成功
       if (Math.random() < 0.8) {
-        resolve(SELECT_RESPONSE_DATA)
+        resolve(SELECT_RESPONSE_DATA);
       } else {
         // 模拟接口调用出错
-        reject(new Error("接口发生错误"))
+        reject(new Error("接口发生错误"));
       }
-    }, 2000)
-  })
+    }, 2000);
+  });
 }
